@@ -1,3 +1,2 @@
-import '../styles/index.scss';
-
-console.log('webpack starterkit');
+console.log('Hello World! I\'m here!!!');
+// 
