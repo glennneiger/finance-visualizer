@@ -13,7 +13,12 @@ module.exports = merge(common, {
   },
   devServer: {
     contentBase: dest,
-    inline: true
+    inline: true,
+    port: 3000,
+    open:true,
+    proxy: {
+      '/api': 'http://localhost:8080'
+    }
   },
   plugins: [
     new Webpack.DefinePlugin({
@@ -23,13 +28,9 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
-        test: /\.(js)$/,
+        test: /\.(js|jsx)$/,
         include: Path.resolve(__dirname, '../src'),
-        enforce: 'pre',
-        loader: 'eslint-loader',
-        options: {
-          emitWarning: true,
-        }
+        loader: 'babel-loader'
       },
       {
         test: /\.s?css$/i,

@@ -4,7 +4,10 @@
   "description": "A light foundation for your next frontend project based on webpack.",
   "scripts": {
     "build": "webpack --config webpack/webpack.config.prod.js  --colors",
-    "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js"
+    "start": "npm run build && node src/server/index.js",
+    "client": "webpack-dev-server --open --config webpack/webpack.config.dev.js",
+    "server": "nodemon src/server/index.js",
+    "dev": "concurrently 'npm run server' 'npm run client'"
   },
   "repository": {
     "type": "git",
@@ -18,16 +21,12 @@
     "javascript",
     "webdev"
   ],
-  "author": "webkid.io",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/wbkd/webpack-starter/issues"
-  },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.4",
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.4",
@@ -46,6 +45,10 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.0.0"
+    "@babel/polyfill": "^7.0.0",
+    "concurrently": "^4.0.1",
+    "nodemon": "^1.18.4",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2"
   }
 }
