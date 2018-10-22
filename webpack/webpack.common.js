@@ -22,7 +22,7 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: Path.resolve(__dirname, '../public'), to: 'public' }
     ]),
-    new HtmlWebpackPlugin({
+    new HtmlWebpackPlugin({ //adds the exported js bundles inside the body tag.
       template: Path.resolve(__dirname, '../src/client/index.html')
     })
   ],

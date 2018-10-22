@@ -1,9 +1,20 @@
+import '../styles/index.scss';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-const Button = function(props){
-    return (
-        <button>web request</button>
-    );
-};
 
-ReactDOM.render(<Button />,document.getElementById("app-base"));
+import { NavBar } from "./navbar/navbar"
+
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <NavBar />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById("app-base")); 
