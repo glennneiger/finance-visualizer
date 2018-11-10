@@ -7,54 +7,56 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 export default class DateRangeForm extends React.Component{
 
+    startDisplayName = "Start Date";
+    endDisplayName = "End Date";
+
     constructor(props){
       super(props);
       this.state = {
         visible: this.props.active,
-        start:{date: this.props.startDate, visible: false, displayName: "Start Date",error:false},
-        end:{date: this.props.endDate, visible: false, displayName: "End Date",error:false},
+        start:{date: this.props.startDate, visible: false,error:false},
+        end:{date: this.props.endDate, visible: false,error:false},
       }
     }
 
     resetAll = () => {
-      this.setState({
-        visible: this.props.active,
-        start:{date: this.props.startDate, visible: false, displayName: "Start Date",error:false},
-        end:{date: this.props.endDate, visible: false, displayName: "End Date",error:false},
+      return new Promise((resolve,reject)=>{
+        this.setState({
+          visible: this.props.active,
+          start:{date: this.props.startDate, visible: false, error:false},
+          end:{date: this.props.endDate, visible: false, error:false},
+        },resolve);
       });
     }
 
     setDate = (key,date) => {
-      this.setState((previousState)=>{
-        let changes = Object.assign(previousState);
-        changes[key].date = date;
-        changes[key].visible = false;
+      return new Promise((resolve,reject) =>{
+        this.setState((previousState)=>{
+          let changes = Object.assign(previousState); //WARNING! Shallow copy.  Object references will be the same as original.
+          changes[key].date = date;
+          changes[key].visible = false;
 
-        let startDate = key === 'start' ? date : changes.start.date;
-        let endDate = key === 'end' ? date : changes.end.date;
-        changes.start.error = !this.validateStartDate(startDate);
-        changes.end.error = !this.validateEndDate(startDate,endDate);
-        return changes;
+          let startDate = key === 'start' ? date : changes.start.date;
+          let endDate = key === 'end' ? date : changes.end.date;
+          changes.start.error = !this.validateStartDate(startDate);
+          changes.end.error = !this.validateEndDate(startDate,endDate);
+          return changes;
+        },resolve);
       });
     }
 
     toggleVisibility = (key) => {
-      this.setState((previousState) =>{
-        let previousDatePicker = previousState[key];
-        let response = {};
-        response[key] = Object.assign(previousDatePicker);
-        response[key].visible = !previousDatePicker.visible;
-        response[key].error = false;
-        return response;
-      });
-    }
+      return new Promise((resolve,reject)=>{
+        this.setState((previousState) =>{
+          let response = {};
+          response = Object.assign(previousState); //WARNING! Shallow copy.  Object references same.
+          response[key].visible = !previousState[key].visible;
 
-    clearError = (key,event) =>{
-      console.log("focus");
-      this.setState( (previousState)=>{
-        let response = Object.assign(previousState);
-        response[key].error = false;
-        return response;
+          response.start.error = !this.validateStartDate(response.start.date);
+          response.end.error = !this.validateEndDate(response.start.date,response.end.date);
+          response[key].error = response[key].visible ?  false : response[key].error;
+          return response;
+        },resolve);
       });
     }
 
@@ -69,25 +71,25 @@ export default class DateRangeForm extends React.Component{
 
     validateStartDate = (startDate)=> startDate != null && moment.isMoment(startDate);
     
-    validateEndDate = (startDate,endDate)=> (endDate != null && moment.isMoment(endDate) && endDate.isSameOrAfter(startDate));
+    validateEndDate = (startDate,endDate)=> (endDate != null && moment.isMoment(endDate) && (!moment.isMoment(startDate) || endDate.isSameOrAfter(startDate)));
 
     render(){
       let displayClass = this.props.active ? "navbar-date-container" : "navbar-date-container-disabled";
       return (
         <div className={displayClass}>
             <DateSelector name="start" visible={this.state.start.visible} date={this.state.start.date} 
-              setDate={this.setDate} toggleVisibility={this.toggleVisibility} displayName={this.state.start.displayName}
+              setDate={this.setDate} toggleVisibility={this.toggleVisibility} displayName={this.startDisplayName}
               error={this.state.start.error}/>
             <DateSelector name="end" visible={this.state.end.visible} date={this.state.end.date} 
-              setDate={this.setDate} toggleVisibility={this.toggleVisibility} displayName={this.state.end.displayName}
-              error={this.state.end.error} onFocus={this.clearError}/>
+              setDate={this.setDate} toggleVisibility={this.toggleVisibility} displayName={this.endDisplayName}
+              error={this.state.end.error} />
             <button className="navbar-date-apply" onClick={this.apply}>Apply</button>
         </div>
       );
   }
 }
 
-const DateSelector = (props) => {
+export const DateSelector = (props) => {
   let buttonClass = props.error ? 'navbar-date-button-error' : 'navbar-date-button';
   return(
     <div className="navbar-date-subcontainer">

@@ -1,5 +1,56 @@
-$body-color: blue;
+////////////////////Global////////////////////
+$loading-dot-size:12rem;
 
-body {
-  color: $body-color;
+.hidden{
+  display:none;
+}
+
+.overall-loading{
+  color:#444444;
+  height:100%;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+  font-size: $loading-dot-size;
+  padding-bottom: $loading-dot-size/2;
+}
+
+@keyframes loading-dots {
+  0% {
+    opacity: .2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .2;
+  }
+}
+.overall-loading span{
+  animation: loading-dots;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.overall-loading span:nth-child(2){
+  animation-delay: .2s;
+}
+
+.overall-loading span:nth-child(3){
+  animation-delay: .4s;
+}
+/////////////////////App///////////////////////
+$app-border-color: #555555;
+
+div .app-base{
+  margin: 0px;
+  padding:0px;
+  overflow:hidden;
+}
+.app-content-left{
+  border-right: 1px solid $app-border-color;
+}
+.app-content-right{
+  border-left: 1px solid $app-border-color;
 }

@@ -1,10 +1,11 @@
 import "../../styles/navbar.scss"
+
 import React from 'react';
-
 import OnlineSlider from "./online-slider";
-import DateRangeForm from "./date-range"
+import DateRangeForm from "./date-range";
+import { FiRefreshCw } from "react-icons/fi";
 
-export class NavBar extends React.Component{
+export default class NavBar extends React.Component{
   
   constructor(props){
     super(props);
@@ -13,32 +14,48 @@ export class NavBar extends React.Component{
   }
 
   toggleDisplayDateRange = function(event){
-    this.setState((prevState)=>({displayDateRange:!prevState.displayDateRange}));
-    this.dateRangeForm.current.resetAll();
+    return new Promise((resolve,reject)=>{
+      this.setState(
+        (prevState)=>{
+          let response = {displayDateRange:!prevState.displayDateRange}
+          this.dateRangeForm.current.resetAll();
+          return response;      
+        },
+        resolve
+      );
+    });
   }
+
   setDateRange = function(startDate,endDate){
-    this.props.setDateRange(startDate,endDate);
-    this.setState({displayDateRange:false});
+    return new Promise(async (resolve,reject)=>{
+      await this.props.setDateRange(startDate,endDate);
+      this.setState({displayDateRange:false},resolve);
+    });
   }
+  
   render(props) {
     return (
       <div>
         <nav id="navbar-nav" className="container-fluid navbar  main-navbar">
-          <div className="row">
-            <div className="col-lg-10 col-xs-12 vert-align">
+          <div className="navbar-row row justify-content-between">
+            <div>
               <div className="inline">
-                  <span className="navbar-title">&lt;Insert Cool Title Here&gt;</span>
-              </div>
-              <div className="inline navbar-left-container-wrapper">
-                <ul id="navbar-left-container"> 
-                  <li className="navbar-item navbar-text">refresh</li>
-                  <li onClick={this.toggleDisplayDateRange.bind(this)} className="navbar-item navbar-text">date range</li>
-                  <li className="navbar-item navbar-text">categorize</li>
-                  <li className="navbar-item navbar-text">prediction</li>
-                </ul>
+                <span className="navbar-title">&lt;Insert Cool Title Here&gt;</span>
+                <div className="inline navbar-left-container">
+                  <ul> 
+                    <li id="navbar-date-range-option" onClick={this.toggleDisplayDateRange.bind(this)} className="navbar-item navbar-text">date range</li>
+                    <li className="navbar-item navbar-text">categorize</li>
+                    <li className="navbar-item navbar-text">prediction</li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <OnlineSlider setIsOnline={this.props.setIsOnline} online={this.props.online} />
+            <div className="flex-grow-1 navbar-right-container">
+              <OnlineSlider setIsOnline={this.props.setIsOnline} online={this.props.online} />
+              <span className="navbar-refresh-wrapper">
+                <FiRefreshCw className="navbar-refresh" size="2rem"/>
+              </span>
+            </div>
           </div>
         </nav>
         <DateRangeForm ref={this.dateRangeForm} active={this.state.displayDateRange} startDate={this.props.startDate} endDate={this.props.endDate} callback={this.setDateRange.bind(this)}/>
