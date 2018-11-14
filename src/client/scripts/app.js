@@ -54,7 +54,7 @@ export default class App extends React.Component {
         <div>
           <NavBar setIsOnline={this.setIsOnline} online={this.state.online} startDate={this.state.startDate} endDate={this.state.endDate} setDateRange={this.setDateRange}/>
         </div>
-        <div className="row flex-grow-1">
+        <div className="perspective-container">
           <div className="app-content-left" style={{width: this.state.overallPerspectiveWidth + "%"}}>
             <OverallPerspective loading={this.state.loading}/>
           </div>

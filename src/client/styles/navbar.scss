@@ -1,4 +1,6 @@
-$background-color: #257937;
+@import "./theme.scss";
+
+$background-color: $main-color;
 $height: 4rem;
 $status-border: rgb(80, 80, 80);
 $status-border-radius: .7rem;
@@ -14,7 +16,7 @@ $date-border-radius: .5rem;
   padding-bottom: 0;
   justify-content:left;
   height:$height;
-  line-height:$height;
+  z-index:10; //ensure it's in front of the content.
 }
 
 .navbar-title{
@@ -33,6 +35,9 @@ $date-border-radius: .5rem;
   padding-left:20px;
   padding-right:20px;
   font-size: 1rem;
+  padding-top:20px;
+  height:100%;
+  text-align:center;
 }
 
 .navbar-item:hover{
@@ -47,6 +52,12 @@ $date-border-radius: .5rem;
   height:$height;
   vertical-align:top;
   padding-left:0;
+  margin-top:-8px;//offset parent's margin.  TODO kill this, parent should have no padding anyways.
+}
+
+.navbar-item-container{
+  height:100%;
+  margin:0px;
 }
 
 .navbar-right-container{
@@ -63,8 +74,6 @@ $date-border-radius: .5rem;
 
 .navbar-text{
   height:100%;
-  padding-top:0px;
-  padding-bottom:0px;
   text-align:center;
 }
 
@@ -83,13 +92,13 @@ $date-border-radius: .5rem;
   margin-top: 0.5rem;
   cursor: pointer;
   display: inline-block;
+  margin:auto;
 }
 
 .navbar-status-option{
   padding-left:.5rem;
   padding-right:.5rem;
   display:inline-block;
-  line-height:3rem;
   vertical-align:top;
   width:5rem;
   background-color:#1f8a36;
@@ -137,8 +146,9 @@ $date-border-radius: .5rem;
   padding-left:2rem;
   padding-right:1rem;
   display:inline-block;
-  vertical-align: top;
   cursor:pointer;
+  height:2.5rem;
+  padding-top:.5rem;
 }
 
 .navbar-refresh{

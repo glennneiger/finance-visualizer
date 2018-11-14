@@ -1,3 +1,7 @@
+@import "~bootstrap/dist/css/bootstrap.min";
+@import "~bootstrap/dist/css/bootstrap.min";
+@import "./theme.scss";
+
 ////////////////////Global////////////////////
 $loading-dot-size:12rem;
 
@@ -5,7 +9,7 @@ $loading-dot-size:12rem;
   display:none;
 }
 
-.overall-loading{
+.perspective-loading{
   color:#444444;
   height:100%;
   display: flex;
@@ -26,18 +30,18 @@ $loading-dot-size:12rem;
     opacity: .2;
   }
 }
-.overall-loading span{
+.perspective-loading span{
   animation: loading-dots;
   animation-duration: 1.4s;
   animation-iteration-count: infinite;
   animation-fill-mode: both;
 }
 
-.overall-loading span:nth-child(2){
+.perspective-loading span:nth-child(2){
   animation-delay: .2s;
 }
 
-.overall-loading span:nth-child(3){
+.perspective-loading span:nth-child(3){
   animation-delay: .4s;
 }
 /////////////////////App///////////////////////
@@ -53,4 +57,129 @@ div .app-base{
 }
 .app-content-right{
   border-left: 1px solid $app-border-color;
+}
+
+.perspective-container{
+  @extend .row;
+  @extend .flex-grow-1;
+  padding-left:15px;
+}
+
+.perspective{
+  @extend .d-flex;
+  @extend .flex-row;
+  height:100%;
+}
+
+.perspective-navbar-container{
+  z-index:10;
+  margin-left:0px;
+  background-color:$main-color;
+  padding-top:10px;
+  width:10rem;
+  transition: width 1s;
+}
+
+.perspective-navbar-container-closed{
+  z-index:10;
+  margin-left:0px;
+  background-color:$main-color;
+  padding-top:10px;
+  width:35px+20px; //10 for left padding, 10 for right padding.
+  transition: width 1s;
+}
+
+.perspective-navbar-title{
+  text-align:center;
+  padding-top:40px;
+  font-size:1.7rem;
+  padding-bottom:40px;
+  overflow:hidden;
+  transition: color .8s;
+  color:white;
+}
+
+.perspective-navbar-hamburger-container{
+  padding-left:10px;
+  cursor:pointer;
+  transition-property: padding-top, padding-bottom;
+  transition-duration: 1s;
+  position:absolute;
+}
+.perspective-navbar-hamburger-container div{
+  width: 35px;
+  height: 5px;
+  background-color: white;
+  margin: 6px 0;
+  transition-property : background-color, transform, margin-top;
+  transition-duration: 1s,1s,1s;
+}
+.perspective-navbar-hamburger-container-opened{
+  padding-top:11px;
+  transition-property: padding-top;
+  transition-duration: 1s;
+}
+.perspective-navbar-hamburger-container-opened div:nth-child(1){
+  transform:rotate(45deg);
+  transition-property : background-color, transform;
+  transition-duration: 1s;
+}
+.perspective-navbar-hamburger-container-opened div:nth-child(2){
+  background-color: #00000000;
+  transition-property : background-color, transform;
+  transition-duration: 1s;
+}
+.perspective-navbar-hamburger-container-opened div:nth-child(3){
+  margin-top:-22px; //2 margins + 2 heights, put it at the same height as the first div.
+  transform:rotate(-45deg);
+  transition-property : background-color, transform, margin-top;
+  transition-duration: 1s,1s,.6s;
+}
+
+.perspective-navbar-invisible{
+  color:#00000000 !important;
+  transition: color .8s;
+}
+
+.perspective-navbar-visible{
+  color:#ffffff;
+}
+
+.perspective-navbar-item{
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left:5px;
+}
+.no-overflow{
+  overflow:hidden;
+  white-space: nowrap;
+}
+
+.perspective-navbar-item-container{
+  @extend .no-overflow;
+  text-align:left;
+  padding-top:20px;
+  padding-bottom:20px;
+  padding-left:10px;
+  cursor:pointer;
+}
+
+.perspective-navbar-item-container:hover span{
+  color:lightgreen;
+  transition-duration:0s;
+  transition-delay:0s;
+}
+
+.perspective-navbar-item-container:hover span svg{
+  color:lightgreen;
+  transition-duration:0s;
+  transition-delay:0s;
+}
+
+.perspective-navbar-icon {
+  color: white;
+}
+
+.perspective-navbar-icon:hover {
+  color: lightgreen;
 }

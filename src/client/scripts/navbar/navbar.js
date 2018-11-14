@@ -42,11 +42,9 @@ export default class NavBar extends React.Component{
               <div className="inline">
                 <span className="navbar-title">&lt;Insert Cool Title Here&gt;</span>
                 <div className="inline navbar-left-container">
-                  <ul> 
-                    <li id="navbar-date-range-option" onClick={this.toggleDisplayDateRange.bind(this)} className="navbar-item navbar-text">date range</li>
-                    <li className="navbar-item navbar-text">categorize</li>
-                    <li className="navbar-item navbar-text">prediction</li>
-                  </ul>
+                    <span id="navbar-date-range-option" onClick={this.toggleDisplayDateRange.bind(this)} className="navbar-item">date range</span>
+                    <span className="navbar-item">categorize</span>
+                    <span className="navbar-item">prediction</span>
                 </div>
               </div>
             </div>
