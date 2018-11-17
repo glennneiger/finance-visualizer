@@ -69,6 +69,10 @@ div .app-base{
   @extend .d-flex;
   @extend .flex-row;
   height:100%;
+  position:relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
 }
 
 .perspective-navbar-container{
