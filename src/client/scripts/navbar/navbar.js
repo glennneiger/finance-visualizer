@@ -36,25 +36,22 @@ export default class NavBar extends React.Component{
   render(props) {
     return (
       <div>
-        <nav id="navbar-nav" className="container-fluid navbar  main-navbar">
-          <div className="navbar-row row justify-content-between">
-            <div>
-              <div className="inline">
-                <span className="navbar-title">&lt;Insert Cool Title Here&gt;</span>
-                <div className="inline navbar-left-container">
-                    <span id="navbar-date-range-option" onClick={this.toggleDisplayDateRange.bind(this)} className="navbar-item">date range</span>
-                    <span className="navbar-item">categorize</span>
-                    <span className="navbar-item">prediction</span>
-                </div>
+        <nav id="navbar-nav" className="main-navbar navbar navbar-expand-md" style={{padding:0}}>
+            <button className="navbar-toggler perspective-navbar-hamburger-container" style={{position:"relative"}} data-toggle="collapse" data-target="#mainNav">
+              <div></div>
+              <div></div>
+              <div></div>
+            </button>
+            <div className="navbar-header">
+              <span className="navbar-title" >&lt;Insert Cool Title Here&gt;</span>
+            </div>
+            <div className="collapse navbar-collapse" id="mainNav">
+              <div className="navbar-nav" style={{height:"100%"}}>
+                  <span id="navbar-date-range-option" onClick={this.toggleDisplayDateRange.bind(this)} className="nav-item nav-link navbar-item" data-toggle="collapse" data-target="#mainNav.show">date range</span>
+                  <span className="nav-item nav-link navbar-item" data-toggle="collapse" data-target="#mainNav.show">categorize</span>
+                  <span className="nav-item nav-link navbar-item" data-toggle="collapse" data-target="#mainNav.show">prediction</span>
               </div>
             </div>
-            <div className="flex-grow-1 navbar-right-container">
-              <OnlineSlider setIsOnline={this.props.setIsOnline} online={this.props.online} />
-              <span className="navbar-refresh-wrapper">
-                <FiRefreshCw className="navbar-refresh" size="2rem"/>
-              </span>
-            </div>
-          </div>
         </nav>
         <DateRangeForm ref={this.dateRangeForm} active={this.state.displayDateRange} startDate={this.props.startDate} endDate={this.props.endDate} callback={this.setDateRange.bind(this)}/>
       </div>

@@ -66,11 +66,11 @@ export default class OverallPerspective extends React.Component{
               <div>$</div>
               <div>$</div>
             </div>
-            <div className="overall-perspective-totals">
-              <div >{this.props.sumByCategory.formattedTotal}</div>
-              <div >{this.props.sumByCategory.formattedMonthlyTotal}</div>
-              <div >{this.props.sumByCategory.formattedYearlyTotal}</div>
-            </div>
+            <span className="overall-perspective-totals">
+              <div>{this.props.sumByCategory.formattedTotal}</div>
+              <div>{this.props.sumByCategory.formattedMonthlyTotal}</div>
+              <div>{this.props.sumByCategory.formattedYearlyTotal}</div>
+            </span>
           </div>
         </div>
       </div>

@@ -7,8 +7,6 @@ export default class TransactionService {
   constructor(){
     this.cache = [{startDate: null, endDate:null, transactions: []}];
     this.formatter = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
       minimumFractionDigits: 2
     })
 

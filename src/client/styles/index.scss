@@ -1,5 +1,4 @@
 @import "~bootstrap/dist/css/bootstrap.min";
-@import "~bootstrap/dist/css/bootstrap.min";
 @import "./theme.scss";
 
 ////////////////////Global////////////////////
@@ -49,8 +48,9 @@ $app-border-color: #555555;
 
 div .app-base{
   margin: 0px;
-  padding:0px;
+  padding:0px 0px;
   overflow:hidden;
+  z-index:$content-z-index;
 }
 .app-content-left{
   border-right: 1px solid $app-border-color;
@@ -76,7 +76,7 @@ div .app-base{
 }
 
 .perspective-navbar-container{
-  z-index:10;
+  z-index:$perspective-navbar-z-index;
   margin-left:0px;
   background-color:$main-color;
   padding-top:10px;
@@ -85,7 +85,7 @@ div .app-base{
 }
 
 .perspective-navbar-container-closed{
-  z-index:10;
+  z-index:$perspective-navbar-z-index;
   margin-left:0px;
   background-color:$main-color;
   padding-top:10px;
