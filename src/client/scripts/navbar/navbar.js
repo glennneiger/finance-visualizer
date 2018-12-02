@@ -46,10 +46,14 @@ export default class NavBar extends React.Component{
               <span className="navbar-title" >&lt;Insert Cool Title Here&gt;</span>
             </div>
             <div className="collapse navbar-collapse" id="mainNav">
-              <div className="navbar-nav" style={{height:"100%"}}>
+              <div className="navbar-nav" style={{height:"100%", width:"100%"}}>
                   <span id="navbar-date-range-option" onClick={this.toggleDisplayDateRange.bind(this)} className="nav-item nav-link navbar-item" data-toggle="collapse" data-target="#mainNav.show">date range</span>
                   <span className="nav-item nav-link navbar-item" data-toggle="collapse" data-target="#mainNav.show">categorize</span>
                   <span className="nav-item nav-link navbar-item" data-toggle="collapse" data-target="#mainNav.show">prediction</span>
+                  <div className="nav-item nav-link d-none d-md-block" style={{marginLeft:"auto",overflow:"hidden",whiteSpace:"nowrap"}}>
+                    <OnlineSlider setIsOnline={this.props.setIsOnline} online={this.props.online} />
+                  </div>
+                  <span className="nav-item nav-link navbar-item navbar-refresh-wrapper d-none d-md-block" data-toggle="collapse" data-target="#mainNav.show"><FiRefreshCw className="navbar-refresh" size="2rem"/></span>
               </div>
             </div>
         </nav>

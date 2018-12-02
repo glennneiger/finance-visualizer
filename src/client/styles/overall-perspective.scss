@@ -1,21 +1,41 @@
 
 .overall-perspective-content{
-  padding-top:30px;
+  padding-top:15px;
   text-align:left;
   flex:1;
+  display: flex;
+  justify-content: center;
+  align-items: center	;
+  margin:0;
+  max-width:1500px !important;
 }
 
 .overall-perspective-chart{
-  width:70%;
-  float: right;
+  // width:70%;
+  max-width: 85vh;
+  margin: 0 auto;
 }
 
 .overall-perspective-key{
-  width:29%;
-  float: left;
-  padding-top:10px;
-  margin-left:1%;
-  margin-top:10px;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  min-height:21rem;
+}
+
+.overall-perspective-key > div:first-child{
+  text-decoration:underline;
+  font-size:1.7rem;
+  color:#444444;
+  text-align:center;
+}
+
+.overall-perspective-key > div:nth-child(2){
+  flex:1;
+  display: flex;
+  justify-content: center;
+  align-items: center	;
+  margin-bottom:2.5rem; //to make up for the title
 }
 
 .overall-perspective-key-item{
@@ -42,28 +62,44 @@
   white-space:nowrap;
   max-width:100%;
   overflow:hidden;
-  text-overflow:ellipsis;
+}
+
+.overall-perspective-key-title{
+  white-space:normal;
+  word-wrap: break-word;
+  font-size:1.5rem;
+  color:#444444;
 }
 
 .overall-perspective-summary{
-  position:absolute;
-  bottom:0;
-  width:100%;
+  height:100%;
   text-align:center;
-  left:0;
-  right:0;
-  font-size:1.2rem;
+  font-size:1.5rem;
+  color:#444444;
+  display:flex;
+  flex-direction:column;
+  min-height:21rem;
 }
 
-.overall-perspective-summary > div{
-  display:inline-block;
-  padding-left:20px;
-  text-align:left;
+.overall-perspective-summary > div > div > div{
+  padding-bottom:20px;
+}
+
+.overall-perspective-summary >div:first-child{
+  font-size:1.7rem;
+  text-decoration:underline;
+}
+
+.overall-perspective-summary > div:nth-child(2){
+  flex:1;
+  display: flex;
+  justify-content: center;
+  align-items: center	;
+  margin-bottom:2.5rem; //to make up for the title
 }
 
 .overall-perspective-totals{
-  display:inline-block;
   padding-left:0;
-  text-align:right;
-  font-family: "Courier New", Courier, monospace;
+  text-align:center;
+  //font-family: "Courier New", Courier, monospace;
 }

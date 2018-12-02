@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/overall-perspective.scss"
+import "../../styles/overall-perspective.scss"
 import { FaChartPie, FaChartLine, FaChartBar} from "react-icons/fa";
 import { IconContext } from "react-icons";
 

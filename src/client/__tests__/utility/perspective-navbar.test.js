@@ -1,7 +1,7 @@
 import React from "react";
 import renderer from "react-test-renderer";
 
-import PerspectiveNavbar from "../scripts/perspective-navbar";
+import PerspectiveNavbar from "../../scripts/utility/perspective-navbar";
 
 describe("Perspective Navbar",()=>{
 

@@ -9,6 +9,9 @@ import NavBar from "./navbar/navbar";
 import OverallPerspective from "./overall/overall-perspective.js";
 import CategoryPerspective from "./category/category-perspective.js";
 import TransactionService from "./service/transaction-service";
+import ResizeBar from "./utility/resize-bar";
+
+import ResizeEvent from "./utility/resize-logic";
 
 export default class App extends React.Component {
 
@@ -21,9 +24,13 @@ export default class App extends React.Component {
       loading:true,
       overallPerspectiveWidth:50,
       transactionSummary:[],
-      transactionSummaryError:null
+      transactionSummaryError:null,
+      resizeFunction:()=>{},
+      resizeEndFunction: ()=>{}
+
     };
     this.transactionService = new TransactionService();
+    this.finishedInitialLoad = false;
     this.colorWheel = [
       {main:"#0399c2", sub:["0399c2"]},
       {main:"#00b0a9", sub:["00b0a9"]},
@@ -70,45 +77,71 @@ export default class App extends React.Component {
    * @param {*} loadFunction the function which loads the data to be retrieved.  The function must return a promise, and its response will be returned.
    */
   async loadData(loadFunction){
-    await new Promise((resolve,reject)=>{
-      this.setState({loading:true},resolve);
-    });
-    let response = await loadFunction();
-    console.log(response);
-    await new Promise((resolve,reject)=>{
-      this.setState({loading:false},resolve);
-    });
-    return response;
+    try{
+      await new Promise((resolve,reject)=>{
+        this.setState({loading:true},resolve);
+      });
+      let response = await loadFunction();
+      await new Promise((resolve,reject)=>{
+        this.setState({loading:false},resolve);
+      });
+      return response;
+    } catch(error){
+      console.error(error);
+      return null;
+    }
   }
   
   async loadSummaryByCategory(startDate,endDate){
-    let response = await this.loadData(
-      ()=>{
-        return this.transactionService.getTransactionSummaryByDateRange(startDate,endDate).catch(
-        (error)=>{
-          this.setState({transactionSummaryError:error});
-          return null;
-        });
+    let loadTrans = ()=>{
+      return this.transactionService.getTransactionSummaryByDateRange(startDate,endDate).catch(
+      (error)=>{
+        console.error(error);
+        this.setState({transactionSummary:null,transactionSummaryError:error});
+        return null;
       });
-    await new Promise((resolve,reject)=>this.setState({transactionSummary:response},resolve));
-    console.log(this.state.transactionSummary);
+    };
+    let response = await this.loadData(loadTrans);
+    if(response){
+      response.categories = response.categories.map((entry,index) => {
+        entry["color"] = this.colorWheel[index].main;
+        return entry;
+      });
+      await new Promise((resolve,reject)=>this.setState({transactionSummaryError:null,transactionSummary:response},resolve));
+    } else{
+      return;
+    }
   }
 
-  componentDidMount(){
-    this.loadSummaryByCategory(this.state.startDate,this.state.endDate);
+  startResize(){
+    let resizeEvent = new ResizeEvent(this.setChildWidth.bind(this));
+    return new Promise((resolve,reject)=>{
+      this.setState(
+      {resizeFunction:resizeEvent.resize.bind(resizeEvent),
+        resizeEndFunction:resizeEvent.end.bind(resizeEvent)
+      },resolve(resizeEvent));
+    });
+  }
+
+  componentDidMount(prevProps,prevState){
+    if(!this.finishedInitialLoad){
+      this.loadSummaryByCategory(this.state.startDate,this.state.endDate);
+      this.finishedInitialLoad = true;
+    }
   }
 
   render() {
     return (
-      <div className="container-fluid app-base h-100 d-flex flex-column">
+      <div onMouseMove={((e)=>(this.state.resizeFunction(e))).bind(this)} onMouseUp={((e)=>(this.state.resizeEndFunction(e))).bind(this)} className="container-fluid app-base h-100 d-flex flex-column">
         <div>
           <NavBar setIsOnline={this.setIsOnline} online={this.state.online} startDate={this.state.startDate} endDate={this.state.endDate} setDateRange={this.setDateRange}/>
         </div>
         <div className="perspective-container">
           <div className="app-content-left" style={{width: this.state.overallPerspectiveWidth + "%"}}>
-            <OverallPerspective loading={this.state.loading} sumByCategory={this.state.transactionSummary} summaryError={this.state.transactionSummaryError} colorPalette={this.colorWheel}/>
+            <OverallPerspective loading={this.state.loading} summaryData={this.state.transactionSummary} summaryError={this.state.transactionSummaryError}/>
           </div>
-          <div className = "app-content-right" style= {{width:(100-this.state.overallPerspectiveWidth) + "%"}}>
+          <ResizeBar width={this.props.resizeBarWidth} startResize={this.startResize.bind(this)}/>
+          <div className = "app-content-right" style= {{width:(100-this.state.overallPerspectiveWidth - this.props.resizeBarWidth) + "%"}}>
             <CategoryPerspective loading={this.state.loading}/>
           </div>
         </div>
