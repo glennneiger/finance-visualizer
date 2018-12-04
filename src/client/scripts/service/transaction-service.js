@@ -16,7 +16,7 @@ export default class TransactionService {
     return [
       { dateTime:moment().subtract(7,"day"), amount:25, category:"Car", subCategory: "Gas", description: "Quick Trip" },
       { dateTime:moment(), amount:300, category:"Car", subCategory: "Car Payment", description: "Bank of America" },
-      { dateTime:moment(), amount:600, category:"Rent", subCategory: "Rent", description: "Sunny Hills Apartments" },
+      { dateTime:moment(), amount:1200, category:"Rent", subCategory: "Rent", description: "Sunny Hills Apartments" },
       { dateTime:moment(), amount:10, category:"Food", subCategory: "Dining", description: "McDonalds" },
       { dateTime:moment(), amount:57, category:"Food", subCategory: "Groceries", description: "Target" },
       { dateTime:moment(), amount:50, category:"Utilities", subCategory: "Water", description: "Water Payment" },

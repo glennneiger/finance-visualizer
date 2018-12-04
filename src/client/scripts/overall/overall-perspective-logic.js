@@ -4,17 +4,14 @@ import $ from "jquery";
 export function addTextToPieChart(pieChartSelector){
   let checkExist = setInterval(function() {
     if ($(pieChartSelector).find("svg").length) {
-       console.log("Exists!");
        clearInterval(checkExist);
-       rawAddTextToPieChart(pieChartSelector);
-    } else{
-      console.log("LIES");
+       _rawAddTextToPieChart(pieChartSelector);
     }
  }, 100);
 }
 
 //NOTE that this function assumes all pie chart slices are convex
-function rawAddTextToPieChart(pieChartSelector){
+export function _rawAddTextToPieChart(pieChartSelector){
   let pieSlices = $(pieChartSelector).find("svg path");
   pieSlices.each((index,element)=>{
     let title = $(element).find("title")[0].textContent;
@@ -22,12 +19,19 @@ function rawAddTextToPieChart(pieChartSelector){
     let commandStrings = pathString.split(/(?=[LMCAz])/); //a list of path commands to draw this pie chart slice
     commandStrings.forEach((item,index)=>commandStrings[index] = item.trim());
     let pathCoordinates = [];
+    let isLargeSection = false;
     commandStrings.forEach((str)=>{
       //convert path 'd' string to a list of parameters
       let key = str[0];
       str = str.substr(1,str.length-1);
       let commandParameters = str.replace(/\n/g, ",").split(",");
       commandParameters.forEach((item,index)=>commandParameters[index] = item.trim());
+      
+      //if it's the curve command 'A', then find the 'large-arc-flag'. 0:convex, 1: conconcave
+      if(commandParameters.length >4){
+        let largeArcAndSweepFlags = commandParameters[2].split(" ");
+        isLargeSection = Number(largeArcAndSweepFlags[1]) == 1;
+      }
       //last 2 coordinates in path parameters are always the x/y coordinates
       if(commandParameters.length >= 2){
         pathCoordinates.push({
@@ -36,16 +40,27 @@ function rawAddTextToPieChart(pieChartSelector){
         });
       }
     });
-    let minX = pathCoordinates.reduce(((min,element)=>Math.min(min,element.x)),Number.MAX_SAFE_INTEGER);
-    let maxX = pathCoordinates.reduce(((max,element)=>Math.max(max,element.x)),Number.MIN_SAFE_INTEGER);
-    let minY = pathCoordinates.reduce(((min,element)=>Math.min(min,element.y)),Number.MAX_SAFE_INTEGER);
-    let maxY = pathCoordinates.reduce(((max,element)=>Math.max(max,element.y)),Number.MIN_SAFE_INTEGER);
-    drawTextOnSVG(minX,(minY+maxY)/2,title,$(pieChartSelector + " > svg"));
+    let center = pathCoordinates.shift();
+    _drawTextOnSVG(pathCoordinates,center,title,isLargeSection,$(pieChartSelector + " > svg"));
+    
   });
-
-  function drawTextOnSVG(startX,startY,text,svgElement){
-    let textEl = $(document.createElementNS('http://www.w3.org/2000/svg', 'text')).attr("x",startX).attr("y",startY).text(text);
-    textEl.css({'font-size': "0.4rem"});
-    textEl.appendTo(svgElement)
+}
+export function _drawTextOnSVG(pathCoordinates,center,text,isLargeSection,svgElement){
+  let radius = center.x;
+  let adjustedCoordinates = pathCoordinates.map((original)=>({x:original.x-center.x,y:original.y-center.y}));
+  if(isLargeSection){
+    adjustedCoordinates = adjustedCoordinates.map((original)=>({x: original.x * -1, y: original.y * -1}));
   }
+  let lowestX = Math.min(adjustedCoordinates[0].x, adjustedCoordinates[1].x); //uses to favor the left side of the pie slice more.  2/3 favor for left x.
+  let dirVector = {x:(adjustedCoordinates[0].x + adjustedCoordinates[1].x + lowestX*2)/4, y:(adjustedCoordinates[0].y+adjustedCoordinates[1].y)/2};
+  let magnitude = Math.sqrt((dirVector.x*dirVector.x) + (dirVector.y*dirVector.y));
+  let dirUnitVector = {x:dirVector.x/magnitude, y:dirVector.y/magnitude};
+
+  let offsetMag = (dirUnitVector.x - 1)*-0.5; //1 on the left, 0 on the right, 0.5 on the top and bottom.
+  offsetMag = Math.sqrt(offsetMag) * 0.7 + 0.2; //sqrt is so it's higher on the top and lower on the bottom.
+  let startPos = {x:(dirUnitVector.x * offsetMag * radius) + radius, y:(dirUnitVector.y * offsetMag * radius) + radius};
+
+  let textEl = $(document.createElementNS('http://www.w3.org/2000/svg', 'text')).attr("x",startPos.x).attr("y",startPos.y).text(text);
+  textEl.css({'font-size': "0.28rem","pointer-events":"none"});
+  textEl.appendTo(svgElement)
 }
