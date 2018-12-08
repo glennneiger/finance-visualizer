@@ -187,3 +187,33 @@ div .app-base{
 .perspective-navbar-icon:hover {
   color: lightgreen;
 }
+
+.perspective-bottom-navbar{
+  position:absolute;
+  bottom:0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.perspective-bottom-navbar .perspective-navbar-item-container{
+  display:inline-block;
+  padding-bottom:0px;
+}
+
+.perspective-bottom-navbar .perspective-navbar-icon{
+  color: #222222;
+  z-index:$navbar-element-z-index;
+}
+
+#overall-perspective-mobile-formatted-total{
+  color:#222222;
+  font-size:3rem;
+  position:absolute;
+  top:0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  margin-top:0px;
+  z-index:$navbar-element-z-index;
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import SVGPieChart from "react-svg-piechart";
 
-import PerspectiveNavbar from '../utility/perspective-navbar';
+import PerspectiveNavbar,{BottomPerspectiveNavbar} from '../utility/perspective-navbar';
 
 import '../../styles/overall-perspective.scss';
 import {addTextToPieChart} from './overall-perspective-logic.js';
@@ -59,7 +59,10 @@ export default class OverallPerspective extends React.Component{
         </div>
         <div id="overall-perspective-content" className={contentClass + " container"}>
           <div className="row align-items-center" style={{width:"100%", height:"100%"}}>
-            <div className="overall-perspective-key col-sm-3">
+            <div style={{width:"100%",textAlign:"center"} } className={"d-md-none"}>
+              <div id="overall-perspective-mobile-formatted-total">{"" + this.props.summaryData.currencySymbol + this.props.summaryData.formattedTotal}</div>
+            </div>
+            <div className="overall-perspective-key col-md-3 d-none d-md-flex">
               <div>Legend</div>
               <div>
                 <ul id="overall-perspective-legend" style={{paddingLeft:"10px"}}>
@@ -67,12 +70,12 @@ export default class OverallPerspective extends React.Component{
                 </ul>
               </div>
             </div>
-            <div className="col-sm-6">
+            <div className="col-md-6 col-xs-12" style={{textAlign:"center"}}>
               <div className="overall-perspective-chart">
                 <SVGPieChart data={this.props.summaryData.categories} expandSize={1} viewBoxSize={75} strokeWidth={.5} expandOnHover/>
               </div>
             </div>
-            <div className="overall-perspective-summary col-sm-3">
+            <div className="overall-perspective-summary col-md-3 d-none d-md-flex">
               <div>Results</div>
               <div>
                 <div>
@@ -90,7 +93,8 @@ export default class OverallPerspective extends React.Component{
                   </div>
                 </div>
               </div>
-            </div>
+            </div>              
+            <BottomPerspectiveNavbar className={"d-md-none"} opened={this.state.navbarOpened} toggleDisplay={this.toggleOverallNavbar.bind(this)} title="Summary"/>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
+@import "~bootstrap/dist/css/bootstrap.min";
 
 .overall-perspective-content{
-  padding-top:15px;
   text-align:left;
   flex:1;
   display: flex;
@@ -12,7 +12,8 @@
 
 .overall-perspective-chart{
   // width:70%;
-  max-width: 85vh;
+  max-width: 75vh;
+  max-height:100%;
   margin: 0 auto;
 }
 
