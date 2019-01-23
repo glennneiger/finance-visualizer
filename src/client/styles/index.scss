@@ -52,12 +52,6 @@ div .app-base{
   overflow:hidden;
   z-index:$content-z-index;
 }
-.app-content-left{
-  border-right: 1px solid $app-border-color;
-}
-.app-content-right{
-  border-left: 1px solid $app-border-color;
-}
 
 .perspective-container{
   @extend .row;
@@ -216,4 +210,12 @@ div .app-base{
   margin: auto;
   margin-top:0px;
   z-index:$navbar-element-z-index;
+}
+
+.app-content-transition{
+  transition:width .8s;
+  transition-timing-function:cubic-bezier(.24,.3,.4,.96);
+}
+.app-content-no-transition{
+  transition:width 0s;
 }

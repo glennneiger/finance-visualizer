@@ -12,6 +12,7 @@ export default class OverallPerspective extends React.Component{
   constructor(props){
     super(props);
     this.state = {navbarOpened:false};
+    this.activeCategory = null;
   }
   toggleOverallNavbar(){
     return new Promise((resolve,reject)=>{
@@ -39,6 +40,21 @@ export default class OverallPerspective extends React.Component{
       return "";
     }
   }
+
+  setActiveCategory(data){
+    if(data){
+      this.activeCategory = data.title;
+    } else{
+      this.activeCategory = null;
+    }
+  }
+
+  onPieChartClick(){
+    if(this.activeCategory){
+      this.props.showDetails(this.activeCategory);
+    }
+  }
+
   render(){
     return this.renderOrDisplayError();
   }
@@ -71,8 +87,8 @@ export default class OverallPerspective extends React.Component{
               </div>
             </div>
             <div className="col-md-6 col-xs-12" style={{textAlign:"center"}}>
-              <div className="overall-perspective-chart">
-                <SVGPieChart data={this.props.summaryData.categories} expandSize={1} viewBoxSize={75} strokeWidth={.5} expandOnHover/>
+              <div className="overall-perspective-chart" onClick={this.onPieChartClick.bind(this)} style={{cursor:"pointer"}}>
+                <SVGPieChart data={this.props.summaryData.categories} onSectorHover={this.setActiveCategory.bind(this)} expandSize={1} viewBoxSize={75} strokeWidth={.5} expandOnHover/>
               </div>
             </div>
             <div className="overall-perspective-summary col-md-3 d-none d-md-flex">

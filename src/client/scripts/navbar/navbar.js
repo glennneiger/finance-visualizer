@@ -45,6 +45,7 @@ export default class NavBar extends React.Component{
             <div className="navbar-header">
               <span className="navbar-title" >&lt;Insert Cool Title Here&gt;</span>
             </div>
+            <div id="navbar-alignment-placeholder"></div> {/*keeps the title in the center when collapsed since there must be 3 items in the navbar to make that happen*/}
             <div className="collapse navbar-collapse" id="mainNav">
               <div className="navbar-nav" style={{height:"100%", width:"100%"}}>
                   <span id="navbar-date-range-option" onClick={this.toggleDisplayDateRange.bind(this)} className="nav-item nav-link navbar-item" data-toggle="collapse" data-target="#mainNav.show">date range</span>
