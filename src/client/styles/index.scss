@@ -56,7 +56,11 @@ div .app-base{
 .perspective-container{
   @extend .row;
   @extend .flex-grow-1;
-  padding-left:15px;
+}
+
+.perspective-container > div{
+  overflow: hidden;
+  height: 100%;
 }
 
 .perspective{
@@ -218,4 +222,7 @@ div .app-base{
 }
 .app-content-no-transition{
   transition:width 0s;
+}
+.vscroll{
+  overflow-y:scroll;
 }

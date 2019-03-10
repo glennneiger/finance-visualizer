@@ -64,6 +64,9 @@ export default class OverallPerspective extends React.Component{
   }
 
   renderOrDisplayError(){
+    if(this.props.summaryError){
+      return (<div className="alert alert-danger" role="alert">{this.props.summaryError}</div>);
+    }
     try{
       let loadingClass = this.props.loading ? 'perspective-loading' : 'hidden';
       let contentClass = (this.props.loading ? 'hidden' : "overall-perspective-content");  

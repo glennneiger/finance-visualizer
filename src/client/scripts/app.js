@@ -1,6 +1,7 @@
 import '../styles/index.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
+import $ from "jquery";
 
 import React from 'react';
 import moment from 'moment';
@@ -19,11 +20,13 @@ export default class App extends React.Component {
     super(props);
     this.detailsAvailableTimeout = null;
     this.state = {
+      activeCategory:"",
       online:false, 
       startDate:moment().startOf('day'), 
       endDate:moment().startOf('day'),
       loading:true,
       overallPerspectiveWidth:50,
+      transactionDetails: {},
       transactionSummary:[],
       transactionSummaryError:null,
       showDetails:false,
@@ -43,6 +46,7 @@ export default class App extends React.Component {
       {main:"#8cbb34", sub:["8cbb34"]},
       {main:"#ffa600", sub:["ffa600"]}
     ];
+    this.DEFAULT_ROW_COUNT = 50;
   }
 
   setIsOnline = (isOnline) => {
@@ -62,6 +66,9 @@ export default class App extends React.Component {
     });
 
     await this.loadSummaryByCategory(startDate,endDate);
+    if(this.state.activeCategory){
+      this.loadTransactionsForCategory(this.state.activeCategory);
+    }
   }
 
   setChildWidth(width){
@@ -95,6 +102,7 @@ export default class App extends React.Component {
   }
   
   async loadSummaryByCategory(startDate,endDate){
+    this.setState({loading:true});
     let loadTrans = ()=>{
       return this.transactionService.getTransactionSummaryByDateRange(startDate,endDate).catch(
       (error)=>{
@@ -110,8 +118,22 @@ export default class App extends React.Component {
         return entry;
       });
       await new Promise((resolve,reject)=>this.setState({transactionSummaryError:null,transactionSummary:response},resolve));
-    } else{
-      return;
+    }
+  }
+
+  async loadTransactionsForCategory(category){
+    this.setState({loading:true});
+    let loadTrans = ()=>{
+      return this.transactionService.getTransactionDetailsForCategory(category).catch(
+      (error)=>{
+        console.error(error);
+        this.setState({transactionDetails:null,transactionDetailsError:error});
+        return null;
+      });
+    };
+    let response = await this.loadData(loadTrans);
+    if(response){
+      await new Promise((resolve,reject)=>this.setState({transactionDetailsError:null,transactionDetails:response},resolve));
     }
   }
 
@@ -130,15 +152,88 @@ export default class App extends React.Component {
   }
 
   displayDetails(categoryTitle){
+    this.loadTransactionsForCategory(categoryTitle);
+    let alreadyVisible = this.state.showDetails;
     return new Promise((resolve)=>{
       let app = this;
-      this.setState({showDetails:true,contentWidthTransition:true},()=>{
-        app.detailsAvailableTimeout = setTimeout(function() {
-          app.setState({contentWidthTransition:false});
-       }, 2000);      
+      this.setState(
+        {showDetails:true,contentWidthTransition:true,activeCategory:categoryTitle},
+        ()=>{
+        app.detailsAvailableTimeout = app.buildDisplayDetailsTimeout(alreadyVisible);     
         resolve();
       });
     });
+  }
+
+  buildDisplayDetailsTimeout(alreadyVisible)
+  {
+    if(alreadyVisible)
+    {
+      return null;
+    }
+    let app = this;
+    return setInterval(function() {
+      if(app.isResizeComplete())
+      {
+        if(app.detailsAvailableTimeout)
+        {
+          clearInterval(app.detailsAvailableTimeout);
+        }
+        app.setState({
+          contentWidthTransition:false,
+          transactionTableRowCount: Math.max(1, app.calculateTransactionTableRowCount()-2)
+        });
+      }
+    }, 200); 
+  }
+
+  isResizeComplete()
+  {
+    let resizedContainer = $("#overall-perspective-width-container");
+    let width = ( 100 * parseFloat($(resizedContainer).css('width')) / parseFloat($(resizedContainer).parent().css('width')) );
+    return Math.abs(width - this.state.overallPerspectiveWidth) < .1;
+  }
+  calculateTransactionTableRowCount()
+  {
+    let visibleRowCount = 0;
+    $.each($("#transactions-wrapper .rt-tbody .rt-tr"), (index, element) =>{
+      if(this.isElementInViewport(element))
+      {
+        visibleRowCount++;
+      }
+    });
+    return visibleRowCount;
+  }
+
+  isElementInViewport (el) {
+
+    //special bonus for those using jQuery
+    if (typeof jQuery === "function" && el instanceof jQuery) {
+        el = el[0];
+    }
+    var rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+  }
+
+  hideDetails(){
+    if(this.state.showDetails){
+      return new Promise((resolve)=>{
+        let app = this;
+        this.setState(
+          {showDetails:false, contentWidthTransition:true, transactionTableRowCount: this.DEFAULT_ROW_COUNT},
+          ()=>{
+          app.detailsAvailableTimeout = setTimeout(function() {
+            app.setState({contentWidthTransition:false});
+        }, 2000);      
+          resolve();
+        });
+      });
+    }
   }
 
   componentDidMount(prevProps,prevState){
@@ -149,21 +244,25 @@ export default class App extends React.Component {
   }
 
   render() {
-    let opWidth = (this.state.showDetails ? this.state.overallPerspectiveWidth : 99) + "%";{/*Only 99% to make room when the 1% resize bar displays*/}
+    let opWidth = (this.state.showDetails ? this.state.overallPerspectiveWidth : 99);{/*Only 99% to make room when the 1% resize bar displays*/}
     let tmp = this.state.contentWidthTransition ? "app-content-transition":"app-content-no-transition";
     return (
       <div onMouseMove={((e)=>(this.state.resizeFunction(e))).bind(this)} onMouseUp={((e)=>(this.state.resizeEndFunction(e))).bind(this)} className="container-fluid app-base h-100 d-flex flex-column">
         <div>
-          <NavBar setIsOnline={this.setIsOnline} online={this.state.online} startDate={this.state.startDate} endDate={this.state.endDate} setDateRange={this.setDateRange}/>
+          <NavBar setIsOnline={this.setIsOnline} online={this.state.online} startDate={this.state.startDate} 
+            endDate={this.state.endDate} setDateRange={this.setDateRange}/>
         </div>
         <div className="perspective-container">
-          <div className={tmp} style={{width: opWidth}}>
-            <OverallPerspective loading={this.state.loading} summaryData={this.state.transactionSummary} summaryError={this.state.transactionSummaryError} showDetails={this.displayDetails.bind(this)}/>
+          <div id="overall-perspective-width-container" className={tmp} style={{width: opWidth + "%"}}>
+            <OverallPerspective loading={this.state.loading} summaryData={this.state.transactionSummary} 
+              summaryError={this.state.transactionSummaryError} showDetails={this.displayDetails.bind(this)}/>
           </div>
           {/*Only display Resize Bar and Category Perspective if we're showing the deails*/}
           {this.state.showDetails && (<ResizeBar width={this.props.resizeBarWidth} startResize={this.startResize.bind(this)}/>)}
           <div className = {tmp} style= {{width:(100-opWidth - this.props.resizeBarWidth) + "%"}}>
-            <CategoryPerspective loading={this.state.loading}/>
+            <CategoryPerspective loading={this.state.loading} categoryName={this.state.activeCategory} 
+              transactionsRowCount={this.state.transactionTableRowCount} transactions={this.state.transactionDetails} 
+              active={this.state.showDetails} closeAction={this.hideDetails.bind(this)}/>
           </div>
         </div>
       </div>

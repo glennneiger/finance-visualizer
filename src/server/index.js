@@ -1,6 +1,8 @@
-import express from 'express';
+const express = require("express");
+const TransactionsHandler = require("./handler/transactions-handler.js");
 var app = express();
-app.use(express.static("build")); //if we don't define a response for base url, we will serve build/index.html
+
+new TransactionsHandler(app);
 app.listen(8080, function () {
   console.log('Finance Visualizer Listening on port 8080!');
 });

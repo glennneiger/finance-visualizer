@@ -13,16 +13,21 @@ export default class TransactionService {
   }
 
   rawGetTransactions = async (startDate,endDate)=>{
-    return [
-      { dateTime:moment().subtract(7,"day"), amount:25, category:"Car", subCategory: "Gas", description: "Quick Trip" },
-      { dateTime:moment(), amount:300, category:"Car", subCategory: "Car Payment", description: "Bank of America" },
-      { dateTime:moment(), amount:1200, category:"Rent", subCategory: "Rent", description: "Sunny Hills Apartments" },
-      { dateTime:moment(), amount:10, category:"Food", subCategory: "Dining", description: "McDonalds" },
-      { dateTime:moment(), amount:57, category:"Food", subCategory: "Groceries", description: "Target" },
-      { dateTime:moment(), amount:50, category:"Utilities", subCategory: "Water", description: "Water Payment" },
-      { dateTime:moment(), amount:120, category:"Utilities", subCategory: "Electricity", description: "OGPL" },
-      { dateTime:moment(), amount:245, category:"Church", subCategory: "Church of the Water Lake", description: "Debit payment water lake" }
-    ];
+    return new Promise((resolve,reject)=>{
+      fetch("api/transactions")
+      .then(
+        async (json) => {
+          let response = await json.json();
+          for (let transIndex = 0; transIndex < response.length; transIndex++) {
+            response[transIndex].dateTime = moment(response[transIndex].dateTime);
+          }
+          resolve(response);
+        },
+        (error) => {
+          reject(error);
+        }
+      )
+    });
   }
   getTransactionsByDateRange = async (startDate,endDate) =>{
     if( (!startDate || !endDate) || (startDate.isSame(this.cache.startDate) && endDate.isSame(this.cache.endDate))){
@@ -31,7 +36,7 @@ export default class TransactionService {
       let transactions = await this.rawGetTransactions(startDate,endDate);
       let response = {transactions:transactions,currencySymbol:"$"};
       this.cache = {startDate:startDate, endDate:endDate, transactionData:response};
-      //setTimeout(()=>resolve(response), 2300); //just here to visualize loading time.
+      await new Promise((resolve)=>{setTimeout(()=>resolve(response), 1000);}); //just here to visualize loading time.
       return response;
     }
   }
@@ -86,12 +91,29 @@ export default class TransactionService {
                        // formattedTotal:         1,407.00
                        // formattedYearlyTotal:   73,365 }
     } catch(error){
-      console.debug("Failed to categorize transactions",error);
+      console.debug("Failed to categorize transactions");
+      console.log(error);
       throw("Failed to categorize transactions");
     }
   }
 
-  getTransactionDetailsByDateRange = (startDate,endDate)=> {
-    //TODO
+  getTransactionDetailsForCategory = async (category)=> {
+    let response = [];
+    let transactions = this.cache.transactionData.transactions;
+    if(transactions.length > 0){
+      transactions.forEach((entry)=>{
+        if(entry.category == category){
+          response.push({
+            date:entry.dateTime,
+            displayDate:entry.dateTime.format("MM/DD/YYYY"),
+            value:entry.amount,
+            displayValue: this.cache.transactionData.currencySymbol + this.longFormatter.format(entry.amount.toFixed(2)),
+            subCategory:entry.subCategory,
+            description:entry.description
+          });
+        }
+      });
+    }
+    return {currencySymbol: this.cache.transactionData.currencySymbol, transactions: response};
   }
 }

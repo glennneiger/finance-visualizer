@@ -9,7 +9,7 @@ export default function(props){
   let openedHamburgerClass = props.opened ? "perspective-navbar-hamburger-container-opened" : "";
   let navbarTitleClass = "perspective-navbar-title " + (props.opened ? "perspective-navbar-visible" : "perspective-navbar-invisible");
   return(
-    <div style={{alignItems: "stretch"}} className={"d-md-flex"}>
+    <div style={{alignItems: "stretch", paddingLeft:"15px"}} className={"d-md-flex"}>
       <div className={overallContainerClass + " d-none d-md-block"}>
         <div onClick={props.toggleDisplay} className={"perspective-navbar-hamburger-container "+openedHamburgerClass}>
           <div></div>
