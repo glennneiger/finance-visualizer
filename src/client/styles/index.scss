@@ -4,8 +4,26 @@
 ////////////////////Global////////////////////
 $loading-dot-size:12rem;
 
+body{
+  overflow:hidden;
+}
 .hidden{
   display:none;
+}
+
+div.perspective-alert.alert{
+  width: 100%;
+  position: absolute;
+  padding-left: 100px;
+  text-align: center;
+  height: auto;
+  z-index: 3;
+  right:0;
+}
+
+.perspective-alert-content{
+  width:50%;
+  margin:auto;
 }
 
 .perspective-loading{
@@ -225,4 +243,14 @@ div .app-base{
 }
 .vscroll{
   overflow-y:scroll;
+}
+
+.no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }
